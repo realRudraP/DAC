@@ -1,7 +1,12 @@
 #include<iostream>
 #include<string>
-
+#include "../include/dac_types.h"
+#include "../include/command.h"
+#include "../include/parser.h"
+#include "../include/manager.h"
 int main(){
+    Parser parser;
+    AccessManager manager;
     std::cout<<"Discretionary Access Control: Linked List\n";
     std::cout<<"(Create Access Policy Mode)\n";
     std::cout<<"Commands:\n";
@@ -19,8 +24,12 @@ int main(){
         if(!std::getline(std::cin,inputLine)){
             std::cerr<<"Error in input from console"<<std::endl;
         }
-
-        
+        Command currentCommand=parser.parse(inputLine);
+        if(currentCommand.type==CommandType::CREATE_OBJ){
+            if(manager.addSubject(currentCommand.subject)){
+                std::cout<<"Subject "+currentCommand.subject+" added successfully"<<std::endl;
+            }
+        }
     }
     
     return 0;

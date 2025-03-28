@@ -1,4 +1,4 @@
-#include "include/parser.h"
+#include "../include/parser.h"
 
 Parser::Parser() {
 
@@ -27,6 +27,10 @@ Command Parser::parse(std::string &inputLine)
             }
         }
     }else if(tokens[0]=="grant"){
+        if(tokens.size()<4){
+            return Command::createError("Grant <Subject Name> <Object Name> [List of Rights]");
+        }
+        
         comType=CommandType::GRANT;
     }else if(tokens[0]=="revoke"){
         comType=CommandType::REVOKE;
@@ -38,6 +42,7 @@ Command Parser::parse(std::string &inputLine)
         comType=CommandType::DONE;
     }
 
+    return CommandType::ERROR;
 }
 
 

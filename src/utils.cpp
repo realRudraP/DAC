@@ -1,5 +1,5 @@
 #include "../include/utils.h"
-#include "include/command.h"
+#include "../include/command.h"
 
 const std::map<ObjectType, std::set<Right>> validRights = {
     {ObjectType::FILE, {Right::READ, Right::WRITE, Right::OWN, Right::OPEN, Right::SEARCH, Right::ACCESS}},
