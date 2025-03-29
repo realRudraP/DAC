@@ -1,2 +1,5 @@
 /.vscode
 main
+src/main.exe
+/.idea
+.clang-format

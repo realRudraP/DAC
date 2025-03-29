@@ -2,6 +2,7 @@
 #define DAC_TYPES_H
 
 #include <string>
+
 #include <set>
 enum class Right
 {
@@ -27,31 +28,18 @@ enum class ObjectType{
 };
 
 
-ObjectType stringToObjectType(const std::string str){
-    if(str=="file"){
-        return ObjectType::FILE;
-    }else if(str=="process"){
-        return ObjectType::PROCESS;
-    }else if(str=="directory"){
-        return ObjectType::DIRECTORY;
-    }else if(str=="database"){
-        return ObjectType::DATABASE;
-    }else if(str=="device"){
-        return ObjectType::DEVICE;
-    }else{
-        return ObjectType::UNKNOWN;
-    }
-}
+
 class ACLEntry
 {
 public:
     std::string subjectId;
     std::set<Right> rights;
-    ACLEntry *next = nullptr;
+    ACLEntry *next;
 
-    ACLEntry(const std::string &subId)
+    ACLEntry(const std::string subId)
     {
         subjectId = subId;
+        next=nullptr;
     }
 };
 
@@ -59,8 +47,8 @@ class ObjectNode
 {
 public:
     std::string objectId;
-    ACLEntry *aclHead = nullptr;
-    ObjectNode *next = nullptr;
+    ACLEntry *aclHead;
+    ObjectNode *next;
     ObjectType objectType;
 
     ObjectNode(const std::string &objectId, ObjectType objType)

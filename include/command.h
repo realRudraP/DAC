@@ -2,9 +2,7 @@
 #define DAC_COMMAND_H
 
 #include <string>
-#include <vector>
 #include <set>
-#include <optional>
 #include "dac_types.h"
 
 enum class CommandType
