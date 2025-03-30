@@ -14,8 +14,7 @@ int main()
     std::cout << "\tCreate Subject <Subject name>\n\tCreate <Object Type> <Object Name>\n";
     std::cout << "\tGrant <Subject Name> <Object Name> [List of Rights]\n";
     std::cout << "\tRevoke <Subject Name> <Object Name> [List of Rights]\n";
-    std::cout << "\tCheck <Subject Name> <Object Name> <Right>\n";
-    std::cout << "\tPolicy\n";
+    std::cout << "\tCheck <Subject Name> <Object Name> <Right to check/All>\n";
     std::cout << "\tDone (Finish creating policies)\n";
 
     std::string inputLine;
@@ -34,16 +33,25 @@ int main()
                 std::cout << "Object " + currentCommand.object + " added successfully" << std::endl;
             }
         } else if (currentCommand.type == CommandType::GRANT) {
-            if (manager.grantPermissions( currentCommand.object,currentCommand.subject, currentCommand.rights)) {
-                std::cout << "Subject '"+currentCommand.subject+"' now has updated permissions for object '" + currentCommand.object+"'" <<std::endl;
+            if (manager.grantPermissions(currentCommand.object, currentCommand.subject, currentCommand.rights)) {
+                std::cout << "Subject '" + currentCommand.subject + "' now has updated permissions for object '" + currentCommand.object + "'" << std::endl;
             }
-        }else if(manager.removePermissions(currentCommand.object,currentCommand.subject,currentCommand.rights)){
-            std::cout << "Subject '" + currentCommand.subject + "' now has updated permissions for object '" + currentCommand.object + "'" << std::endl;
+        } else if (currentCommand.type == CommandType::REVOKE) {
+            if (manager.removePermissions(currentCommand.object, currentCommand.subject, currentCommand.rights)) {
+                std::cout << "Subject '" + currentCommand.subject + "' now has updated permissions for object '" + currentCommand.object + "'" << std::endl;
+            }
+        } else if (currentCommand.type==CommandType::CHECK) {
+            if(manager.hasPermission(currentCommand.object,currentCommand.subject,currentCommand.rights)){
+                std::cout << "Subject " + currentCommand.subject + " has " + rightToString(*(currentCommand.rights).begin()) + " access on the object " + currentCommand.object << std::endl;
+            }
+        }else if(currentCommand.type==CommandType::DONE){
+            std::cout << "Finished adding permissions. Now moving to access stage" << std::endl;
+            return 0;
         }
-        else if(currentCommand.type==CommandType::ERROR){
+         else if (currentCommand.type == CommandType::ERROR) {
             std::cerr << "Error: " + currentCommand.errorMessage << std::endl;
         }
     }
 
-    return 0;
+    return -1;
 }

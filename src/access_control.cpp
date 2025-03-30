@@ -150,7 +150,7 @@ bool AccessManager::removePermissions(const std::string objName, const std::stri
     for (Right right : rights) {
         if (entryToModify->rights.erase(right) > 0) {
             rightsWereRemoved = true;
-        }else{
+        } else {
             std::cout << "\tInfo: Given subject didnt't have '" + rightToString(right) + "' permission on the given object. Continuing with other rights revocation" << std::endl;
         }
     }
@@ -159,14 +159,40 @@ bool AccessManager::removePermissions(const std::string objName, const std::stri
     }
     if (entryToModify->rights.empty()) {
         std::cout << "Info: All rights removed for subject '" << subName << "' on object '" << objName << "'. Removing ACL entry." << std::endl;
-        
-        if(previousEntry==nullptr){
+
+        if (previousEntry == nullptr) {
             requiredObject->aclHead = entryToModify->next;
-        }else{
+        } else {
             previousEntry->next = entryToModify->next;
         }
         delete entryToModify;
         entryToModify = nullptr;
     }
     return true;
+}
+
+const bool AccessManager::hasPermission(const std::string objName, const std::string subName, std::set<Right> right)
+{
+    ObjectNode* targetObject = findObjectWithName(objName);
+    if (targetObject == nullptr) {
+        std::cerr << "Warning: checkAccesss failed- Object " + objName + " not found" << std::endl;
+        return false;
+    }
+    if (!subjectExists(subName)) {
+        std::cerr << "Warning: checkAccess failed- Subject " + subName + " not found" << std::endl;
+        return false;
+    }
+    ACLEntry* acl = findACLEntryWithinObject(targetObject, subName, false);
+    if (acl == nullptr) {
+        std::cout << "The subject " + subName + " has no rights on the object " + objName << std::endl;
+        return false;
+    }
+    for (Right r : right) {
+        bool hasRight = acl->rights.count(r) > 0;
+        if (!hasRight) {
+            std::cout << "Subject: " + subName + " does not have " + rightToString(r) + " access on " + objName << std::endl;
+        }
+        return hasRight;
+    }
+    return false;
 }

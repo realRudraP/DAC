@@ -18,6 +18,7 @@ class AccessManager{
     ACLEntry* findACLEntryWithinObject(ObjectNode* obj,const std::string subjectName,bool createIfDoesntExist);
     bool grantPermissions(const std::string objName,const std::string subName,std::set<Right>rights);
     bool removePermissions(const std::string objName, const std::string subName, std::set<Right> rights);
+    const bool hasPermission (const std::string objName, const std::string subName, std::set<Right> right);
 };
 
 #endif
