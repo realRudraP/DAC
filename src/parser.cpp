@@ -58,21 +58,24 @@ Command Parser::parse(std::string &inputLine)
             return Command::createError("Invalid CHECK syntax. Expected: Check <Subject Name> <Object Name> [List of Rights]");
         }
         std::set<Right> rightsSet;
-        if(tokens[3]=="all"){
-            rightsSet.insert(Right::ALL);
-        }else{
+        
             Right requestedRight = stringToRight(tokens[3]);
             if(requestedRight==Right::INVALID){
                 return Command::createError("Invalid permission '" + tokens[3] + "' encountered. Cancelling check.");
             }
             rightsSet.insert(requestedRight);
-        }
+        
         return Command(CommandType::CHECK,tokens[1],tokens[2],ObjectType::UNKNOWN,rightsSet);
     }else if(tokens[0]=="done"){
         return CommandType::DONE;
+    }else if(tokens[0]=="help"){
+        if(tokens.size()>1){
+            std::cout << "Ignoring words after help" << std::endl;
+        }
+        return Command(CommandType::HELP,"","",ObjectType::UNKNOWN,{});
     }
 
-    return CommandType::ERROR;
+    return Command::createError("Invalid command entered. Use 'Help' to find list of valid commands");
 };
 std::vector<std::string> Parser::tokenize(const std::string &inputLine)
 {
@@ -84,4 +87,23 @@ std::vector<std::string> Parser::tokenize(const std::string &inputLine)
         tokens.push_back(token);
     }
     return tokens;
+}
+Command Parser::parseAccessRequest(std::string inputLine){
+    if(inputLine.empty()){
+        return CommandType::BLANK;
+    }
+    std::transform(inputLine.begin(),inputLine.end(),inputLine.begin(),::tolower);
+    std::vector<std::string> tokens=Parser::tokenize(inputLine);
+    if(tokens.size()!=3){
+        return Command::createError("Invalid syntax. Expected: <Subject Name> <Object Name> <Right to access>");
+    }
+    std::set<Right> rightSet;
+    Right reqRight = stringToRight(tokens[2]);
+    if(reqRight==Right::INVALID){
+        return Command::createError("Invalid right " + tokens[2] + " was entered.");
+    }
+    rightSet.insert(reqRight);
+
+    Command checkCommand = Command(CommandType::CHECK, tokens[0], tokens[1], ObjectType::UNKNOWN, rightSet);
+    return checkCommand;
 }

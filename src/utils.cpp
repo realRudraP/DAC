@@ -9,6 +9,70 @@ const std::map<ObjectType, std::set<Right>> validRights = {
     { ObjectType::DEVICE, { Right::OWN, Right::RUN, Right::STOP, Right::ACCESS } },
     { ObjectType::UNKNOWN, {} }
 };
+void displayHelp() {
+    std::cout << "\n==================================================\n";
+    std::cout << "            DISCRETIONARY ACCESS CONTROL HELP            \n";
+    std::cout << "==================================================\n\n";
+    
+    // Basic Commands Section
+    std::cout << "BASIC COMMANDS:\n";
+    std::cout << "---------------\n";
+    std::cout << std::setw(40) << std::left << "Create Subject <Subject name>" << "Create a new subject in the system\n";
+    std::cout << std::setw(40) << std::left << "Create <Object Type> <Object Name>" << "Create a new object of specified type\n";
+    std::cout << std::setw(40) << std::left << "Grant <Subject Name> <Object Name> [Rights]" << "Grant permissions to a subject\n";
+    std::cout << std::setw(40) << std::left << "Revoke <Subject Name> <Object Name> [Rights]" << "Remove permissions from a subject\n";
+    std::cout << std::setw(40) << std::left << "Check <Subject Name> <Object Name> <Right>" << "Check if subject has specific permission\n";
+    std::cout << std::setw(40) << std::left << "Done" << "Finish creating policies and move to access stage\n";
+    std::cout << std::setw(40) << std::left << "Help" << "Display this help message\n\n";
+    
+    // Object Types Section
+    std::cout << "AVAILABLE OBJECT TYPES:\n";
+    std::cout << "----------------------\n";
+    std::cout << "file, process, directory, database, device\n\n";
+    
+    // Rights Section
+    std::cout << "AVAILABLE RIGHTS:\n";
+    std::cout << "----------------\n";
+    std::cout << "read (r), write (w), own (o), execute (x), run, open, stop, search, access\n\n";
+    
+    // Valid Rights per Object Type Section
+    std::cout << "VALID RIGHTS PER OBJECT TYPE:\n";
+    std::cout << "----------------------------\n";
+    
+    for (const auto& entry : validRights) {
+        if (entry.first == ObjectType::UNKNOWN) continue;
+        
+        std::cout << objectTypeToString(entry.first) << ": ";
+        bool first = true;
+        for (const auto& right : entry.second) {
+            if (!first) std::cout << ", ";
+            std::cout << rightToString(right);
+            first = false;
+        }
+        std::cout << "\n";
+    }
+    std::cout << "\n";
+    
+    // Examples Section
+    std::cout << "EXAMPLES:\n";
+    std::cout << "---------\n";
+    std::cout << "Create Subject alice\n";
+    std::cout << "Create file document.txt\n";
+    std::cout << "Create directory home\n";
+    std::cout << "Grant alice document.txt read write\n";
+    std::cout << "Check alice document.txt read\n";
+    std::cout << "Revoke alice document.txt write\n";
+    std::cout << "Done\n\n";
+    
+    // Notes Section
+    std::cout << "NOTES:\n";
+    std::cout << "------\n";
+    std::cout << "- Rights can be specified using full names (read, write) or shortcuts (r, w, o, x) where applicable\n";
+    std::cout << "- Object names and Subject names are case-insensitive\n";
+    std::cout << "- Multiple rights can be specified in Grant and Revoke commands\n";
+    std::cout << "- The 'Check' command requires specifying a particular right to check\n";
+    std::cout << "==================================================\n\n";
+}
 
 ObjectType stringToObjectType(const std::string str)
 {
@@ -71,7 +135,7 @@ Right stringToRight(const std::string str)
         return Right::OWN;
     } else if (str == "execute" || str == "x") {
         return Right::EXECUTE;
-    } else if (str == "run" || str == "r") {
+    } else if (str == "run") {
         return Right::RUN;
     } else if (str == "open") {
         return Right::OPEN;

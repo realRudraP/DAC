@@ -12,7 +12,9 @@ class Parser{
     public:
     Parser();
     Command parse(std::string& inputLine);
-    private:
+    Command parseAccessRequest(std::string inputLine);
+
+private:
     std::vector<std::string> tokenize(const std::string& inputLine);
 };
 #endif

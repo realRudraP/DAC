@@ -15,6 +15,7 @@ enum class CommandType
     POLICY,
     BLANK,
     ERROR,
+    HELP,
     DONE
 };
 

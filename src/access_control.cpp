@@ -1,6 +1,7 @@
 #include "../include/dac_types.h"
 #include "../include/manager.h"
 #include "../include/utils.h"
+#include "../include/colors.h"
 
 AccessManager::AccessManager() { AccessManager::objectHead = nullptr; }
 inline bool AccessManager::subjectExists(const std::string name)
@@ -184,13 +185,13 @@ const bool AccessManager::hasPermission(const std::string objName, const std::st
     }
     ACLEntry* acl = findACLEntryWithinObject(targetObject, subName, false);
     if (acl == nullptr) {
-        std::cout << "The subject " + subName + " has no rights on the object " + objName << std::endl;
+        std::cout << Color::RED<<"The subject " + subName + " has no rights on the object " + objName <<Color::RESET<< std::endl;
         return false;
     }
     for (Right r : right) {
         bool hasRight = acl->rights.count(r) > 0;
         if (!hasRight) {
-            std::cout << "Subject: " + subName + " does not have " + rightToString(r) + " access on " + objName << std::endl;
+            std::cout<<Color::RED<<"Access DENIED:"<<Color::RESET <<"Subject '" + subName + "' does NOT have " + rightToString(*(right).begin()) + " access on object '" + objName + "'" << std::endl;
         }
         return hasRight;
     }

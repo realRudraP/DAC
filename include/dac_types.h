@@ -15,8 +15,7 @@ enum class Right
     STOP,
     SEARCH,
     ACCESS,
-    INVALID,
-    ALL
+    INVALID
 };
 
 enum class ObjectType{
