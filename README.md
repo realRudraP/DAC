@@ -1,3 +1,4 @@
+[![C++ Build and Release Pipeline](https://github.com/realRudraP/DAC/actions/workflows/build.yml/badge.svg)](https://github.com/realRudraP/DAC/actions/workflows/build.yml)
 # Discretionary Access Control System
 
 A C++ implementation of a Discretionary Access Control (DAC) system using linked lists. This program allows users to create access policies and check access permissions for various subjects and objects in a system.
