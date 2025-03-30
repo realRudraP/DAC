@@ -35,9 +35,12 @@ int main()
             }
         } else if (currentCommand.type == CommandType::GRANT) {
             if (manager.grantPermissions( currentCommand.object,currentCommand.subject, currentCommand.rights)) {
-                std::cout << "Subject "+currentCommand.subject+"now has updated permissions for object '" + currentCommand.object <<std::endl;
+                std::cout << "Subject '"+currentCommand.subject+"' now has updated permissions for object '" + currentCommand.object+"'" <<std::endl;
             }
-        }else if(currentCommand.type==CommandType::ERROR){
+        }else if(manager.removePermissions(currentCommand.object,currentCommand.subject,currentCommand.rights)){
+            std::cout << "Subject '" + currentCommand.subject + "' now has updated permissions for object '" + currentCommand.object + "'" << std::endl;
+        }
+        else if(currentCommand.type==CommandType::ERROR){
             std::cerr << "Error: " + currentCommand.errorMessage << std::endl;
         }
     }

@@ -110,3 +110,63 @@ bool AccessManager::grantPermissions(const std::string objName,
 
     return permissionChanged;
 }
+bool AccessManager::removePermissions(const std::string objName, const std::string subName, std::set<Right> rights)
+{
+    ObjectNode* requiredObject = AccessManager::findObjectWithName(objName);
+    if (!AccessManager::subjectExists(subName)) {
+        std::cerr << "Error in REVOKE operation. No subject with name '" + subName + "' was found. Cancelling operation"
+                  << std::endl;
+        return false;
+    }
+
+    if (requiredObject == nullptr) {
+        std::cerr << "Error in REVOKE operation. No object with name '" + objName + "' was found."
+                  << std::endl;
+        return false;
+    }
+    if (!this->subjectExists(subName)) {
+        std::cerr << "Warning in REVOKE operation: Subject '" << subName << "' is not globally known (though permissions might not exist anyway)." << std::endl;
+        return false;
+    }
+    ACLEntry* entryToModify = nullptr;
+    ACLEntry* previousEntry = nullptr;
+    ACLEntry* currentEntry = requiredObject->aclHead;
+
+    while (currentEntry != nullptr) {
+        if (currentEntry->subjectId == subName) {
+            entryToModify = currentEntry;
+            break;
+        }
+        previousEntry = currentEntry;
+        currentEntry = currentEntry->next;
+    }
+
+    if (entryToModify == nullptr) {
+        std::cout << "Info: Subject '" << subName << "' has no permissions on object '" << objName << "'. Nothing to revoke." << std::endl;
+        return true;
+    }
+
+    bool rightsWereRemoved = false;
+    for (Right right : rights) {
+        if (entryToModify->rights.erase(right) > 0) {
+            rightsWereRemoved = true;
+        }else{
+            std::cout << "\tInfo: Given subject didnt't have '" + rightToString(right) + "' permission on the given object. Continuing with other rights revocation" << std::endl;
+        }
+    }
+    if (!rightsWereRemoved) {
+        std::cout << "Info: None of the specified rights were present for subject '" << subName << "' on object '" << objName << "'." << std::endl;
+    }
+    if (entryToModify->rights.empty()) {
+        std::cout << "Info: All rights removed for subject '" << subName << "' on object '" << objName << "'. Removing ACL entry." << std::endl;
+        
+        if(previousEntry==nullptr){
+            requiredObject->aclHead = entryToModify->next;
+        }else{
+            previousEntry->next = entryToModify->next;
+        }
+        delete entryToModify;
+        entryToModify = nullptr;
+    }
+    return true;
+}

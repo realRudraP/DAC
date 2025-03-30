@@ -47,7 +47,19 @@ Command Parser::parse(std::string &inputLine)
         }
         return Command(CommandType::GRANT,tokens[1],tokens[2],ObjectType::UNKNOWN,rightsSet);
     }else if(tokens[0]=="revoke"){
-        comType=CommandType::REVOKE;
+        if(tokens.size()<4){
+            return Command::createError("Invalid REVOKE syntax. Expected: Revoke <Subject Name> <Object Name> [List of Rights]");
+        }
+        std::set<Right> rightsSet;
+        for(int i=3;i<tokens.size();i++){
+            Right currentRight=stringToRight(tokens[i]);
+            if(currentRight==Right::INVALID){
+                return Command::createError("Invalid RIGHT '"+tokens[i]+"' encountered. Cancelling Operation.");
+            }else{
+                rightsSet.insert(currentRight);
+            }
+        }
+        return Command(CommandType::REVOKE,tokens[1],tokens[2],ObjectType::UNKNOWN,rightsSet);
     }else if(tokens[0]=="check"){
         comType=CommandType::CHECK;
     }else if(tokens[0]=="policy"){
